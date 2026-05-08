@@ -3,11 +3,27 @@ import serial
 import time
 import json
 
+from kinematicArm import RobotKinematics, Position
+
+
+#Example usage of kinematicArm class    
+#kin = RobotKinematics()
+#angles = kin.solve_ik(x=100, y=0, z=80, phi_deg=90)
+#if angles:
+#    base, shoulder, elbow, wrist = angles
+
+#Forward kinematics
+#pos = kin.solve_fk(base=90, shoulder=90, elbow=90, wrist=90)
+#print(pos.x, pos.y, pos.z)
+
+
 try:
     ser = serial.Serial('COM4', 115200, timeout=1)
     time.sleep(2)
 except:
     ser = None
+
+kin = RobotKinematics()
 
 
 last_send_time = 0
@@ -128,11 +144,8 @@ def flush_serial():
 
 def write_serial_values(a, b, c, d, e):
     if ser:
-        ser.write(f"{a} {b} {c} {d}\n".encode())
+        ser.write(f"{a} {b} {c} {d} {g}\n".encode())
         
-        time.sleep(0.02)
-        
-        ser.write(f"g {e}\n".encode())
 
 
 def change_mode_serial(mode):
@@ -329,7 +342,9 @@ def read_robot_state():
         phi = slider_values["Phi Angle"].get()
         grip = slider_values["Gripper Servo"].get()
 
-        write_serial_values(x, y, z, phi, grip)
+        base, shoulder, elbow, wrist = kin.solve_ik(x=x, y=y, z=z, phi_deg=phi)
+        
+        write_serial_values(base, shoulder, elbow, wrist, grip)
 
     else:
         base = slider_values["Base Servo"].get()
