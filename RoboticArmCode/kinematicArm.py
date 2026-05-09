@@ -11,12 +11,9 @@ class Position:
 
 
 class RobotKinematics:
+
+
     """
-    Forward and Inverse Kinematics for a 4-DOF robotic arm + gripper.
-
-    Arm segment lengths (mm) can be overridden in the constructor.
-
-    Usage:
         from kinematics import RobotKinematics, Position
 
         kin = RobotKinematics()
