@@ -1,0 +1,36 @@
+(footprint "Pico2WH_2x20_Dupont"
+  (version 20211014)
+  (generator pcbnew)
+
+  (descr "Raspberry Pi Pico 2 WH dual row 2x20 2.54mm Dupont header")
+
+  (attr through_hole)
+
+  (fp_text reference "J?" (at 0 -2.5) (layer "F.SilkS"))
+  (fp_text value "Pico2WH Header" (at 0 27) (layer "F.Fab"))
+
+  (fp_line (start -1 -1) (end 17.78 -1) (layer "F.SilkS"))
+  (fp_line (start 17.78 -1) (end 17.78 24) (layer "F.SilkS"))
+  (fp_line (start 17.78 24) (end -1 24) (layer "F.SilkS"))
+  (fp_line (start -1 24) (end -1 -1) (layer "F.SilkS"))
+
+  ; left row (20 pins)
+  (for i 0 19
+    (pad "${i+1}" thru_hole circle
+      (at 0 (* i 2.54))
+      (size 1.7 1.7)
+      (drill 1.0)
+      (layers "*.Cu" "*.Mask")
+    )
+  )
+
+  ; right row (20 pins)
+  (for i 0 19
+    (pad "${i+21}" thru_hole circle
+      (at 17.78 (* i 2.54))
+      (size 1.7 1.7)
+      (drill 1.0)
+      (layers "*.Cu" "*.Mask")
+    )
+  )
+)

@@ -76,34 +76,28 @@ def save_animation():
 
 def load_animation():
     global recorded_values_position, recorded_values_angle, last_recorded_time
-
     try:
         with open("animation.json", "r") as f:
             data = json.load(f)
-        mode = data["mode"]
+        mode     = data["mode"]
         sequence = data["sequence"]
-    
+
         record_listbox.delete(0, tk.END)
         last_recorded_time = 0.0
-        
+
         if mode == "ik":
             recorded_values_position = sequence
             toggle_state.set(True)
+            for x, y, z, phi, grip, t in sequence:
+                record_listbox.insert(tk.END, f"X:{x} Y:{y} Z:{z} Phi:{phi} G:{grip} T:{t}")
         else:
             recorded_values_angle = sequence
             toggle_state.set(False)
-
-        for value  in sequence:
-            if mode == "ik":
-                x, y, z, phi, grip, t = values
-                record_listbox.insert(tk.END, f"X:{x} Y:{y} Z:{z} Phi:{phi} G:{grip} T:{t}")
-            else:
-                b, s, e, p, g, t = values
+            for b, s, e, p, g, t in sequence:
                 record_listbox.insert(tk.END, f"B:{b} S:{s} E:{e} P:{p} G:{g} T:{t}")
 
         print("Animation loaded")
     except FileNotFoundError:
-        
         print("No saved animation found")
 
 def read_serial_message():
@@ -144,18 +138,11 @@ def flush_serial():
 
 def write_serial_values(a, b, c, d, e):
     if ser:
-        ser.write(f"{a} {b} {c} {d} {g}\n".encode())
+        ser.write(f"{a} {b} {c} {d} {e}\n".encode())
         
 
 
-def change_mode_serial(mode):
-    global ik_mode_on
 
-    if mode != ik_mode_on:
-        ik_mode_on = bool(mode)
-
-        if ser:
-            ser.write(b"m 1\n" if mode else b"m 0\n")
 
 
 def clear_widgets():
@@ -221,11 +208,11 @@ def update_mode():
     if toggle_state.get():
         toggle_button.config(text="Mode: POSITION")
         show_position_mode()
-        change_mode_serial(1)
+   
     else:
         toggle_button.config(text="Mode: ANGLES")
         show_angle_mode()
-        change_mode_serial(0)
+   
 
 
 def record_position():
@@ -278,10 +265,11 @@ def record_angles():
 
 
 def clear_records():
+    global last_recorded_time        
     recorded_values_position.clear()
     recorded_values_angle.clear()
     record_listbox.delete(0, tk.END)
-    
+    last_recorded_time = 0.0
 
 def animate():
     if toggle_state.get():
@@ -342,16 +330,21 @@ def read_robot_state():
         phi = slider_values["Phi Angle"].get()
         grip = slider_values["Gripper Servo"].get()
 
-        base, shoulder, elbow, wrist = kin.solve_ik(x=x, y=y, z=z, phi_deg=phi)
-        
-        write_serial_values(base, shoulder, elbow, wrist, grip)
+        kinematics = kin.solve_ik(x=x, y=y, z=z, phi_deg=phi)
+        if kinematics:
+            base, shoulder, elbow, wrist = kinematics
+            write_serial_values(base, shoulder, elbow, wrist, grip)
+        else:
+            print("Not reachable")
 
     else:
         base = slider_values["Base Servo"].get()
         shoulder = slider_values["Shoulder Servo"].get()
         elbow = slider_values["Elbow Servo"].get()
-        phi = slider_values["Phi Servo"].get()
+        phi = slider_values["Phi Servo"].get() 
         grip = slider_values["Gripper Servo"].get()
+        
+        
 
         write_serial_values(base, shoulder, elbow, phi, grip)
 

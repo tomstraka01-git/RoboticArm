@@ -1,0 +1,4 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "LibrearyFootprintPico2W") (type "KiCad") (uri "${KIPRJMOD}/LibrearyFootprintPico2W.pretty") (options "") (descr ""))
+)
