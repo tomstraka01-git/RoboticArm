@@ -2,6 +2,7 @@ import tkinter as tk
 import serial
 import time
 import json
+import math
 
 from kinematicArm import RobotKinematics, Position
 
@@ -193,6 +194,7 @@ def show_position_mode():
     create_slider("Z Position", 1)
     create_slider("Phi Angle", 1)
     create_slider("Gripper Servo", 1)
+    
 
 
 def show_angle_mode():
@@ -203,7 +205,12 @@ def show_angle_mode():
     create_slider("Phi Servo", 0)
     create_slider("Gripper Servo", 0)
 
-
+    forward_kinem_label = tk.Label(content_frame)
+    forward_kinem_label.pack()
+    
+    pos = kin.solve_fk(90, 90, 90, 90)
+    
+    forward_kinem_label.config(text=f"X:{pos.x}, Y:{pos.y}, Z:{pos.z}")
 def update_mode():
     if toggle_state.get():
         toggle_button.config(text="Mode: POSITION")
@@ -213,6 +220,8 @@ def update_mode():
         toggle_button.config(text="Mode: ANGLES")
         show_angle_mode()
    
+
+
 
 
 def record_position():
@@ -271,48 +280,65 @@ def clear_records():
     record_listbox.delete(0, tk.END)
     last_recorded_time = 0.0
 
+STEPS = 50 
+ 
+def lerp(a, b, t):
+    return a + (b - a) * t
+ 
+ 
+def cosine_ease(a, b, t):
+    t_smooth = (1 - math.cos(t * math.pi)) / 2
+    return a + (b - a) * t_smooth
+ 
+ 
 def animate():
     if toggle_state.get():
         sequence = recorded_values_position
+        keys = ["X Position", "Y Position", "Z Position", "Phi Angle", "Gripper Servo"]
     else:
         sequence = recorded_values_angle
-
+        keys = ["Base Servo", "Shoulder Servo", "Elbow Servo", "Phi Servo", "Gripper Servo"]
+ 
     if not sequence:
         print("No data recorded")
         return
+ 
+    def play_segment(seg_index=0, step=0):
 
-    def play_step(index=0):
-        if index >= len(sequence):
-            return
-
-        values = sequence[index]
-        if toggle_state.get():
-            slider_values["X Position"].set(values[0])
-            slider_values["Y Position"].set(values[1])
-            slider_values["Z Position"].set(values[2])
-            slider_values["Phi Angle"].set(values[3])
-            slider_values["Gripper Servo"].set(values[4])
-        else:
-            slider_values["Base Servo"].set(values[0])
-            slider_values["Shoulder Servo"].set(values[1])
-            slider_values["Elbow Servo"].set(values[2])
-            slider_values["Phi Servo"].set(values[3])
-            slider_values["Gripper Servo"].set(values[4])
-
-        write_serial_values(*values[:5])
-
-        if index < len(sequence) - 1:
-            current_time = values[5]
-            next_time = sequence[index + 1][5]
-
-            delay = next_time - current_time
-            delay = max(delay, 0.001)  
-
-            root.after(int(delay * 1000), lambda: play_step(index + 1))
-        else:
+        if seg_index >= len(sequence) - 1:
+           
+            final = sequence[-1]
+            for i, key in enumerate(keys):
+                slider_values[key].set(int(final[i]))
+            write_serial_values(*[int(final[i]) for i in range(5)])
             print("Animation finished")
-
-    play_step()
+            return
+ 
+        start_kf = sequence[seg_index]
+        end_kf = sequence[seg_index + 1]
+ 
+        segment_duration = end_kf[5] - start_kf[5]  
+        step_delay_ms = max(1, int(segment_duration / STEPS * 1000))
+ 
+        t = step / STEPS 
+ 
+       
+        interpolated = []
+        for i in range(5):
+            val = int(cosine_ease(start_kf[i], end_kf[i], t))
+            slider_values[keys[i]].set(val)
+            interpolated.append(val)
+ 
+        write_serial_values(*interpolated)
+ 
+        if step < STEPS - 1:
+           
+            root.after(step_delay_ms, lambda: play_segment(seg_index, step + 1))
+        else:
+            
+            root.after(step_delay_ms, lambda: play_segment(seg_index + 1, 0))
+ 
+    play_segment()
 
 def read_robot_state():
     global last_send_time
