@@ -26,6 +26,7 @@ The circuit consists of a microcontroller, can be any but i chose pico 2. A PCA9
 ![Logo](screenshots/DiagramStatisRobotArm.png)
 ![Logo](screenshots/ProjectScreenshot13.png)
 ![Logo](screenshots/ProjectScreenshot14.png)
+![Logo](screenshots/ProjectScreenshot15.png)
 
 ## How to print?
 If you want to replicate the project, you need to buy simillar servos, use some i2c pwm generation module and some circuit to distribute the power. For printing downooad the 3d print file, and use a 3d printer, that has over 400mm print surface. I want to use pla, because it is cheap and okay for my project. You can use other filaments if you want. For my printer, Prusa XL, the slicer says that it would take 22 hours to print and 300 grams to print. Use any microcontroller wich has i2c and serial communication, upload the code and connect it via usb to pc running the python file. Then it should work.
