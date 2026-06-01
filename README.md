@@ -57,4 +57,6 @@ Why would i want to build this arm? Because it is a great learning oppurtunity t
 | Servo motor MG996R 13 kg, 180° | Motors of the arm, will rotate the joints | 3 | $18.60 | [Link](https://rpishop.cz/641352/servo-mg996r-13-kg/) | rpishop.cz |
 | **Total** | | | **$45.06** | | |
 
+Note: PCA9685 I2C driver and power supply were reused from previous projects / already owned, $0 cost.
+
 Made by Tomáš Straka for Statis Hackathon by hackclub.
