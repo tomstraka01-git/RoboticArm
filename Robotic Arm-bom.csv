@@ -1,0 +1,5 @@
+Name,Purpose,Quantity,Total Cost (USD),Link,Distributor
+"Servo 30 cm connector cable extension Male - Female","Cable extension for servo so i can connect it to power and microcontroller when the cable is not long enough to reach it.",2,4.68,"https://rpishop.cz/servomotory/2878-servo-30-cm-propojka-samec-samice.html","rpishop.cz"
+"Raspberry Pico 2 WH","It is the brain of the robotic arm, will be used to control the servos and if it works compute angles using inverse kynematic for the servos.",1,10.98,"https://rpishop.cz/590613/raspberry-pico-2-wh/","rpishop.cz"
+"Professional Lab - PLA+ Filament - black(1,75 mm, 1 kg)","It is the filment i will use to print the robotic arm fusion 360 model",1,10.80,"https://rpishop.cz/616058/professional-lab-pla-plus-cerny/","rpishop.cz"
+"Servo motor MG996R 13 kg, 180°","Motors of the arm, will rotate the joints",3,18.60,"https://rpishop.cz/641352/servo-mg996r-13-kg/","rpishop.cz"
