@@ -472,7 +472,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "StatisHackathonRobotDog.kicad_pro",
+    "filename": "StatisHackathonRobotArm.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -627,8 +627,8 @@
     "subpart_id_separator": 0,
     "top_level_sheets": [
       {
-        "filename": "StatisHackathonRobotDog.kicad_sch",
-        "name": "Hlavní",
+        "filename": "StatisHackathonRobotArm.kicad_sch",
+        "name": "StatisHackathonRobotArm",
         "uuid": "17d58e71-5997-4d1c-9310-91aa15340e7c"
       }
     ],
